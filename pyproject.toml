@@ -1,7 +1,7 @@
 [project]
 name = "primitive-db"
 version = "0.1.0"
-description = "Add your description here"
+description = "This app allow to create and manage tables"
 readme = "README.md"
 authors = [
     { name = "MikhailRogovoy", email = "cookie96965@gmail.com" }
@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [project.scripts]
-project = "primitive_db.main:main"
+database = "primitive_db.main:main"
 
 [build-system]
 requires = ["uv_build>=0.13.6,<0.14.0"]
