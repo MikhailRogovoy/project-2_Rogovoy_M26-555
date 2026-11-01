@@ -1,5 +1,6 @@
 import prompt
 
+
 def welcome():
     print("""
 Первая попытка запустить проект!
@@ -13,4 +14,4 @@ def welcome():
 <command> help - справочная информация
 """)
 
-    command = prompt.string('Введите команду: ')
+    prompt.string('Введите команду: ')
