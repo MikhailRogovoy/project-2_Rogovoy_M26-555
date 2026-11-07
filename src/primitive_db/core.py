@@ -1,6 +1,6 @@
-from . import decorators
+from . import constants, decorators
 
-VALID_TYPES = {'int', 'str', 'bool'}
+VALID_TYPES = constants.VALID_TYPES
 
 @decorators.handle_db_errors
 def create_table(metadata:dict, table_name:str, columns:list[str]) -> dict[str, dict]:

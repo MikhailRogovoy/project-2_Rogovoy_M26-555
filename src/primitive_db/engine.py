@@ -3,9 +3,9 @@ import shlex
 import prompt
 from prettytable import PrettyTable
 
-from . import core, decorators, parser, utils
+from . import constants, core, decorators, parser, utils
 
-META_FILE = "db_meta.json"
+META_FILE = constants.META_FILE
 
 def print_help():
     """Функция выводит справочное сообщение."""
