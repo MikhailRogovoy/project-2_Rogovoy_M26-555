@@ -3,7 +3,7 @@ import shlex
 import prompt
 from prettytable import PrettyTable
 
-from . import core, parser, utils
+from . import core, decorators, parser, utils
 
 META_FILE = "db_meta.json"
 
@@ -15,6 +15,7 @@ def print_help():
     print("<command> create_table <имя_таблицы> <столбец1:тип> .. - создать таблицу")
     print("<command> list_tables - показать список всех таблиц")
     print("<command> drop_table <имя_таблицы> - удалить таблицу")
+    print("<command> info <имя_таблицы> - вывести информацию о таблице.")
 
     print("\n***Операции с данными***")
     print("Функции:")
@@ -23,7 +24,6 @@ def print_help():
     print("<command> select from <имя_таблицы> - прочитать все записи.")
     print("<command> update <имя_таблицы> set <столбец1> = <новое_значение1> where <столбец_условия> = <значение_условия> - обновить запись.") # noqa: E501
     print("<command> delete from <имя_таблицы> where <столбец> = <значение> - удалить запись.")  # noqa: E501
-    print("<command> info <имя_таблицы> - вывести информацию о таблице.")
     
     print("\nОбщие команды:")
     print("<command> exit - выход из программы")
@@ -32,6 +32,8 @@ def print_help():
 def run():
     print("***База данных***")
     print_help()
+
+    select_cache, clear_cache = decorators.create_cacher()
 
     while True:
         metadata = utils.load_metadata(META_FILE)
@@ -87,6 +89,7 @@ def run():
                     utils.save_metadata(META_FILE, result)
                     utils.delete_file(table_name=args[1])
                     print(f'Таблица "{args[1]}" успешно удалена.')
+                    clear_cache(args[1])
 
             case 'insert':
                 if (len(args) < 5
@@ -105,6 +108,7 @@ def run():
                         utils.save_table_data(args[2], insert_result)
                         key_id = list(insert_result.keys())[-1]
                         print(f'Запись с ID={key_id} успешно добавлена в таблицу "{args[2]}".') # noqa: E501
+                        clear_cache(args[2])
                 else:
                     print('Ошибка. Неверно переданы значения в insert после values')
 
@@ -119,7 +123,7 @@ def run():
 
                 if len(args) == 3:
                     table_data = utils.load_table_data(args[2])
-                    select_result = core.select(table_data)  
+                    select_result = select_cache(args[2], core.select, table_data)
                     if isinstance(select_result, dict):
                         columns = list(metadata[args[2]].keys())
                         table = PrettyTable()
@@ -131,7 +135,7 @@ def run():
                         print('Данных для прочтения не обнаружено.')
 
                 elif len(args) > 3 and args[3].strip() == 'where':
-                    where_str = user_input.split(' ', 4)[4]
+                    where_str = user_input.strip().split(' ', 4)[4]
                     where_clause = parser.parser_conditions(where_str, 'where')
                     if not isinstance(where_clause, dict):
                         continue
@@ -139,8 +143,11 @@ def run():
                         print(f'Ошибка: Столбец {args[4]} в таблице "{args[2]}" не найден.') # noqa: E501
                         continue
 
+                    key_cache = {}
+                    key_cache[args[2]] = where_clause
+
                     table_data = utils.load_table_data(args[2])
-                    select_result = core.select(table_data, where_clause) 
+                    select_result = select_cache(key_cache, core.select, table_data)
                     if isinstance(select_result, dict):
                         columns = list(metadata[args[2]].keys())
                         table = PrettyTable()
@@ -188,6 +195,8 @@ def run():
                     utils.save_table_data(args[1], result_update[0])
                     for key in result_update[1]:
                         print(f'Запись с ID={key} в таблице "{args[1]}" успешно обновлена.') # noqa: E501
+                    clear_cache(args[1])
+
 
             case 'delete':
                 if (len(args) != 7
@@ -215,6 +224,7 @@ def run():
                     utils.save_table_data(args[2], result_delete[0])
                     for key in result_delete[1]:
                         print(f'Запись с ID={key} успешно удалена из таблицы "{args[2]}".') # noqa: E501
+                    clear_cache(args[2])
 
             case 'info':
                 if len(args) != 2:
