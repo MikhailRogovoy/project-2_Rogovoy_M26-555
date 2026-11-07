@@ -13,10 +13,6 @@ def parser_conditions(string: str, keyword: str) -> (dict[str, int]
     
     conditions = string.split('=')
     conditions = [item.strip() for item in conditions]     
-
-    for item in conditions:
-        if ' ' in item:
-            raise ValueError(f'Ошибка: Неверное условие {keyword} <столбец> = <значение>') # noqa: E501
     
     if len(conditions) == 2:
         if ((conditions[1][0] in ['+', '-']
@@ -31,7 +27,7 @@ def parser_conditions(string: str, keyword: str) -> (dict[str, int]
             and conditions[1][-1] == '"'):
                 if keyword == 'set':
                     return {conditions[0]:f'{conditions[1][1:-1]}'}
-                return {conditions[0]:f'"{conditions[1][1:-1]}"'}
+                return {conditions[0]:conditions[1]}
         else:
             raise ValueError(f'Ошибка: Строка {conditions[1]} должна быть в кавычках')
     
