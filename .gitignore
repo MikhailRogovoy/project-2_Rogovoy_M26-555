@@ -1,8 +1,5 @@
 .venv
 dist/
-data/
 __pycache__/
 *.egg-info
 .python-version
-.ruff_cache
-db_meta.json
