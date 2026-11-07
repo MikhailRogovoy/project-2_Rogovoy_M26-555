@@ -6,20 +6,20 @@
 
 project-2-database/
 
-├── src/\n
-│   └── primitive_db/\n
-│       ├── __init__.py\n
-│       ├── engine.py\n
-│       ├── main.py\n
-│       ├── core.py\n
-|       ├── utils.py\n
-|       ├── parser.py\n
-|       └── decorators.py\n
-|\n
-├── pyproject.toml\n
-├── uv.lock\n
-├── README.md\n
-└── .gitignore\n
+├── src/<br />
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   └── primitive_db/<br />
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       ├── __init__.py<br />
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       ├── engine.py<br />
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       ├── main.py<br />
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       ├── core.py<br />
+|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       ├── utils.py<br />
+|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       ├── parser.py<br />
+|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       └── decorators.py<br />
+|<br />
+├── pyproject.toml<br />
+├── uv.lock<br />
+├── README.md<br />
+└── .gitignore<br />
 
 ## Установка 
 1. Установите пакетный и проектный менеджер uv:
