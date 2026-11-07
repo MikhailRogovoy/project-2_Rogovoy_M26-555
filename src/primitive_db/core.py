@@ -113,41 +113,58 @@ def update(table_data:dict,
            where_clause:dict[str, str | int | bool]) -> (tuple[dict, list] 
                                                          | None):
     """Функция для обновления данных в таблице по условию"""
-    update_data = select(table_data=table_data, where_clause=where_clause)
-    if isinstance(update_data, dict):
-        for item in list(update_data.items()):
-            if update_data[item[0]].get(list(set_clause.keys())[0], None) is not None:
-                update_data[item[0]].update(set_clause)
-        
-        keys = []
-        for item in list(update_data.items()):
-            table_data[item[0]] = item[1]
-            keys.append(item[0])      
-        return (table_data, keys)
+    where_key = list(where_clause.keys())[0]
+    where_value = list(where_clause.values())[0]
+    set_key = list(set_clause.keys())[0]
+    set_value = list(set_clause.values())[0]
 
-    print('Изменений по заданному условию нет.')
-    return None
+    keys = []
+    if where_key == 'ID':
+        for key in list(table_data.keys()):
+            if int(key) == where_value:
+                table_data[key][set_key] = set_value
+                keys.append(key)
+    else:
+        for key in list(table_data.keys()):
+            if ((isinstance(where_value,str) 
+                and table_data[key].get(where_key.strip('"')) == where_value.strip('"'))
+                or table_data[key].get(where_key) == where_value):
+                table_data[key][set_key] = set_value
+                keys.append(key)
+
+    if keys == []:
+        print('Изменений по заданному условию нет.')
+        return None
+    return (table_data, keys)
 
 @decorators.confirm_action('удаление данных из таблицы')
 def delete(table_data:dict, where_clause:dict) -> (tuple[dict, list] 
                                                    | None):
     """Функция для удаления данных из таблицы по условию"""
-    delete_data = select(table_data=table_data, where_clause=where_clause)
-    if isinstance(delete_data, dict):
-        keys = []
-        for key in list(delete_data.keys()):
-            table_data.pop(key)
-            keys.append(key)
+    where_key = list(where_clause.keys())[0]
+    where_value = list(where_clause.values())[0]
 
-        updated_table_data = {}
-        items = list(table_data.items())
-        for i in range(1, len(table_data) + 1):
-            updated_table_data[i] = items[i-1][1]
-        return (updated_table_data, keys)
+    keys = []
+    if where_key == 'ID':
+        for key in list(table_data.keys()):
+            if int(key) == where_value:
+                del table_data[key]
+                keys.append(key)
+    else:
+        for key in list(table_data.keys()):
+            if ((isinstance(where_value, str)
+                and table_data[key].get(where_key.strip('"')) == where_value.strip('"'))
+                or table_data[key].get(where_key) == where_value):
+                del table_data[key]
+                keys.append(key)
 
-    print('Нет данных для удаления по заданному условию.')
-    return None
+    if keys == []:
+        print('Нет данных для удаления по заданному условию.')
+        return None
 
-
-
-        
+    updated_table_data = {}
+    items = list(table_data.items())
+    for i in range(1, len(table_data) + 1):
+        updated_table_data[i] = items[i-1][1]    
+    
+    return (updated_table_data, keys)        

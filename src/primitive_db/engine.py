@@ -174,18 +174,18 @@ def run():
                     continue
                 
                 set_clause_str = ' '.join(map(str.strip, [args[3], args[4], args[5]]))
+                if args[3] not in list(metadata[args[1]].keys()):
+                    print(f'Ошибка: столбец {args[3]} отсутствует в таблице {args[1]}')
+                    continue
                 where_clause_str = ' '.join(map(str.strip, [args[7], args[8], args[9]]))
+                if args[7] not in list(metadata[args[1]].keys()):
+                    print(f'Ошибка: столбец {args[7]} отсутствует в таблице {args[1]}')
+                    continue
                 set_clause = parser.parser_conditions(set_clause_str, 'set')
                 where_clause = parser.parser_conditions(where_clause_str, 'where')
                 
                 if (not isinstance(set_clause, dict)
                     or not isinstance(where_clause, dict)):
-                    continue
-                if list(set_clause.keys())[0] not in metadata[args[1]].keys():
-                    print(f'Ошибка: Столбец {args[3]} в set не найден в таблице "{args[1]}".') # noqa: E501
-                    continue
-                if list(where_clause.keys())[0] not in metadata[args[1]].keys():
-                    print(f'Ошибка: Столбец {args[7]} в where не найден в таблице "{args[1]}".') # noqa: E501
                     continue
 
                 table_data = utils.load_table_data(args[1])
@@ -199,10 +199,8 @@ def run():
 
 
             case 'delete':
-                if (len(args) != 7
-                    or args[1].strip() != 'from'
-                    or args[3].strip() != 'where'
-                    or args[5].strip() != '='):
+                if (len(args) != 7 or args[1].strip() != 'from'
+                    or args[3].strip() != 'where' or args[5].strip() != '='):
                     print(f'Ошибка: Неверно передана команда {args[0]}')
                     continue
                 if metadata.get(args[2], None) is None:
@@ -211,11 +209,11 @@ def run():
 
                 table_data = utils.load_table_data(args[2])
                 where_clause_str = ' '.join(map(str.strip, [args[4], args[5], args[6]]))
+                if args[4] not in list(metadata[args[2]].keys()):
+                    print(f'Ошибка: Столбец {args[4]} в таблице {args[2]} не найден')
+                    continue                
                 where_clause = parser.parser_conditions(where_clause_str, 'where')
                 if not isinstance(where_clause, dict):
-                    continue
-                if list(where_clause.keys())[0] not in metadata[args[2]].keys():
-                    print(f'Ошибка: Столбец {args[4]} в таблице "{args[2]}" не найден.')
                     continue
 
                 result_delete = core.delete(table_data, where_clause)
