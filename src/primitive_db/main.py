@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
-from . import engine
-
 
 def main() -> None:
-    engine.run()
+    print("DB project is running!")
 
 if __name__ == '__main__':
     main()
